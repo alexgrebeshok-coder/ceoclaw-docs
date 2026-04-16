@@ -86,15 +86,51 @@ graph LR
 | Component | Technology | Notes |
 |-----------|-----------|-------|
 | Frontend | Next.js 15, React 19 | App Router, Server Components |
-| Styling | Tailwind CSS | Utility-first, dark mode |
+| Styling | Tailwind CSS | Utility-first, dark mode, responsive |
 | Language | TypeScript (strict) | Full type safety |
 | Database | PostgreSQL | Primary data store |
-| ORM | Prisma | 73 models, migrations |
+| ORM | Prisma | 73 models, migrations, auto-generated types |
 | AI Providers | OpenRouter, Zhipu AI, OpenAI | Multi-provider with fallback |
 | Maps | Yandex Maps | Russian geography focus |
 | Auth | NextAuth.js | Credential + OAuth providers |
 | Deployment | Vercel | Edge functions, preview deploys |
 | Monitoring | Custom (planned: Sentry) | Error tracking, performance |
+
+## Deployment Architecture
+
+### Current Stack (Production)
+```
+Frontend (Vercel)
+  ↓ (Server Components)
+Next.js 15 (Edge Functions)
+  ↓
+API Routes (REST + SSE)
+  ↓
+Business Logic Layer
+  ↓
+AI Engine (Multi-Provider Router)
+  ↓
+PostgreSQL (Managed: Supabase or Neon)
+  ↓
+External Integrations (1C, GPS, Maps)
+```
+
+### Production Environment
+- **Frontend:** Vercel (CDN, edge caching, automatic SSL)
+- **Database:** PostgreSQL 14+ (Supabase managed or Neon serverless)
+- **Storage:** S3-compatible (Cloudflare R2 for cost efficiency)
+- **Environment:** Production (verified via CI/CD pipeline)
+
+### Development Environment
+- **Frontend:** Next.js dev server (hot reload)
+- **Database:** Local PostgreSQL or Docker PostgreSQL
+- **AI:** Local models (Ollama) for testing
+- **CI/CD:** GitHub Actions (automated tests + deployment)
+
+### Scalability Considerations
+- **Vertical scaling:** PostgreSQL read replicas for high-traffic periods
+- **Horizontal scaling:** Stateless frontend (Vercel handles CDN)
+- **Auto-scaling:** Vercel edge functions auto-scale to zero
 
 ## Security Considerations
 
